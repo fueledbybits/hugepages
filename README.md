@@ -30,7 +30,9 @@ The script performs the following actions automatically:
 
     Calculates Memory Requirements: It reads your configured innodb_buffer_pool_size (for the database) and your opcache.memory_consumption + opcache.jit_buffer_size (for PHP).
 
-    Determines Huge Page Count: It calculates the total number of 2MB Huge Pages needed to cover both your database and PHP cache, adding a small safety overhead.
+        https://dev.mysql.com/doc/refman/8.4/en/large-page-support.html
+
+    Determines Huge Page Count: It calculates the total number of 2MB Huge Pages needed to cover both your database and PHP cache, adding a small safety overhead. 
 
     Configures the Kernel: It creates a configuration file at /etc/sysctl.d/98-hugepages.conf to instruct the Linux kernel to reserve this pool of Huge Pages on every boot.
 
@@ -92,6 +94,9 @@ The script will automatically configure your system files. However, it is a best
         echo "  cat /proc/meminfo | grep Huge"
 
 After the reboot, your server will be running with the high-performance Huge Pages configuration fully enabled for both your database and PHP.
+
+If InnoDB cannot use hugePages, it falls back to use of traditional memory and writes a warning to the error log: 
+    "Warning: Using conventional memory pool". 
 
 
 <h3> Important Disclaimer: Understanding Memory Reservation </h3>
