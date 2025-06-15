@@ -5,10 +5,12 @@
 
 This repository contains a shell script (hugepages.sh) designed to automate the configuration of Linux Huge Pages on a production web server running aaPanel.
 
-The primary goal is to improve the performance and stability of MariaDB/MySQL and PHP OPcache by allowing them to use a dedicated, pre-allocated pool of memory. This is a standard optimization for high-performance servers, and this script automates the complex calculation and configuration steps.
-Target Environment
+The primary goal is to improve the performance and stability of MariaDB/MySQL and PHP OPcache by allowing them to use a dedicated, pre-allocated pool of memory. This is a standard optimization for high-performance servers, and this script automates the complex calculation and configuration steps. The script also disables THP Transparent Hugepages (AnonHugePages) for better memory management and performance.
 
-<h3> This script is specifically designed and tested for a server environment with the following components:</h3>
+
+<h3>Target Environment</h3>
+
+ <b>This script is specifically designed and tested for a server environment with the following components:</b>
 
     Control Panel: aaPanel
 
@@ -35,6 +37,8 @@ The script performs the following actions automatically:
     Configures MariaDB: It checks your /etc/my.cnf and automatically adds the large-pages=1 directive under the [mysqld] section, telling the database to use the reserved Huge Pages.
 
     Configures PHP: It checks your target php.ini file and automatically adds opcache.huge_code_pages=1 under the [opcache] section, telling OPcache to use the reserved Huge Pages.
+
+    Disables THP Transparent Hugepages (AnonHugePages). Creates a systemd service (disable-thp.service) to disable THP during boot.
 
 <h3>Instructions for Use</h3
 
@@ -84,4 +88,26 @@ The script will automatically configure your system files. However, it is a best
 
     sudo reboot
 
+    fter rebooting, you can verify Huge and Anon H Pages status with:
+        echo "  cat /proc/meminfo | grep Huge"
+
 After the reboot, your server will be running with the high-performance Huge Pages configuration fully enabled for both your database and PHP.
+
+
+<h3> Important Disclaimer: Understanding Memory Reservation <h3>
+
+Enabling Huge Pages is a powerful performance optimization, but it fundamentally changes how your server's memory is managed. It is crucial to understand this trade-off.
+
+    Permanent Reservation: When you enable Huge Pages using this script, you are instructing the Linux kernel to permanently reserve a large, contiguous block of RAM at boot time. For example, if the script calculates a need for 8.5 GB, that memory is immediately set aside for this specific purpose.
+
+    Not Available for General Use: This reserved memory is no longer available to the operating system for general use. It cannot be used for:
+
+        The OS disk cache (which normally speeds up file access).
+
+        Other applications that are not specifically configured to use Huge Pages.
+
+        Temporarily accommodating memory spikes from other services.
+
+    The Trade-Off: You are intentionally sacrificing a portion of your server's memory flexibility in exchange for a significant performance and stability gain for your most critical applications (MariaDB and PHP OPcache). By giving them this exclusive, non-fragmented pool of RAM, you ensure they run with maximum efficiency and are protected from the system-level memory pressure that can cause latency spikes.
+
+This is a standard and highly recommended practice for dedicated, high-performance database and application servers where the performance of MariaDB and PHP is the top priority.
