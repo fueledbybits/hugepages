@@ -63,7 +63,7 @@ Example for PHP 8.3:
 
 Example for PHP 8.1:
 
-sudo ./setup_hugepages.sh php81
+    sudo ./setup_hugepages.sh php81
 
 If you forget the argument, the script will show you a list of the PHP versions it has detected.
 
@@ -94,7 +94,7 @@ The script will automatically configure your system files. However, it is a best
 After the reboot, your server will be running with the high-performance Huge Pages configuration fully enabled for both your database and PHP.
 
 
-<h3> Important Disclaimer: Understanding Memory Reservation <h3>
+<h3> Important Disclaimer: Understanding Memory Reservation </h3>
 
 Enabling Huge Pages is a powerful performance optimization, but it fundamentally changes how your server's memory is managed. It is crucial to understand this trade-off.
 
