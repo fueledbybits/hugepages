@@ -1,12 +1,14 @@
-Automated Huge Pages Configuration for aaPanel Servers
-Overview
+<h1>Automated Huge Pages Configuration for aaPanel Servers</h1>
 
-This repository contains a shell script (setup_hugepages.sh) designed to automate the configuration of Linux Huge Pages on a production web server running aaPanel.
+
+<h3> Overview </h3>
+
+This repository contains a shell script (hugepages.sh) designed to automate the configuration of Linux Huge Pages on a production web server running aaPanel.
 
 The primary goal is to improve the performance and stability of MariaDB/MySQL and PHP OPcache by allowing them to use a dedicated, pre-allocated pool of memory. This is a standard optimization for high-performance servers, and this script automates the complex calculation and configuration steps.
 Target Environment
 
-This script is specifically designed and tested for a server environment with the following components:
+<h3> This script is specifically designed and tested for a server environment with the following components:</h3>
 
     Control Panel: aaPanel
 
@@ -18,7 +20,7 @@ This script is specifically designed and tested for a server environment with th
 
     Database: MariaDB or MySQL installed via aaPanel.
 
-What the Script Does
+<h3>What the Script Does</h3>
 
 The script performs the following actions automatically:
 
@@ -34,34 +36,35 @@ The script performs the following actions automatically:
 
     Configures PHP: It checks your target php.ini file and automatically adds opcache.huge_code_pages=1 under the [opcache] section, telling OPcache to use the reserved Huge Pages.
 
-Instructions for Use
-Step 1: Download the Script
+<h3>Instructions for Use</h3
 
-Log in to your server via SSH as the root user or a user with sudo privileges. Download the script to your current directory.
+<b>Step 1: Download the Script</b>
 
-wget -O setup_hugepages.sh [URL_TO_RAW_SCRIPT_IN_YOUR_GITHUB_REPO]
 
+    wget -O hugepages.sh [URL_TO_RAW_SCRIPT_IN_YOUR_GITHUB_REPO]
+    
 (Note: Replace the URL with the actual raw link from your GitHub repository.)
-Step 2: Make the Script Executable
 
-Give the script the necessary permissions to be run as a program.
 
-chmod +x setup_hugepages.sh
+<b>Step 2: Make the Script Executable</b>
 
-Step 3: Run the Script
+    chmod +x hugepages.sh
 
-Execute the script with sudo. You must provide the target PHP version (using the name from the /usr/local/lsws/ directory) as an argument.
+
+<b>Step 3: Run the Script</b>
 
 Example for PHP 8.3:
 
-sudo ./setup_hugepages.sh php83
+    sudo ./hugepages.sh php83
 
 Example for PHP 8.1:
 
 sudo ./setup_hugepages.sh php81
 
 If you forget the argument, the script will show you a list of the PHP versions it has detected.
-Step 4: Final Verification and Reboot (CRITICAL)
+
+
+<b>Step 4: Final Verification and Reboot (CRITICAL)</b>
 
 The script will automatically configure your system files. However, it is a best practice to manually verify these changes before the final, required reboot.
 
@@ -69,13 +72,13 @@ The script will automatically configure your system files. However, it is a best
 
     cat /etc/my.cnf
 
-    Ensure large-pages=1 is present under the [mysqld] section.
+    Ensure large-pages=1 is present under the [mysqld] section. Add if not present.
 
     Check PHP Config (using your target version):
 
     cat /usr/local/lsws/lsphp83/etc/php.ini
 
-    Ensure opcache.huge_code_pages=1 is present under the [opcache] section.
+    Ensure opcache.huge_code_pages=1 is present under the [opcache] section. Add if not present.
 
     Reboot the Server: A reboot is required for the kernel to properly allocate the reserved memory.
 
